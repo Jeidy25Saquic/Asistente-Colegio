@@ -954,15 +954,16 @@
                                    - Responde en ESPAÑOL conversacional
                                    - Sé CLARO y EDUCATIVO
                                    - Usa ejemplos y analogías simples
-                                   - Incluye datos interesantes relevantes
                                    - Mantén respuestas de 3-5 frases
                                    - NO uses emojis en tus respuestas
                                    - Adapta el lenguaje al nivel del usuario
                                    -no use formatos de texto especiales como negritas, cursivas, subrayado, símbolos, etc
                                    -no saludes a menos que el usuario lo haga primero
-                                   -Cuando te pidan realizar horarios, agendar actividades, etc, hazlo de forma detalada y organizada no use formatos de texto especiales como negritas, cursivas, subrayado, símbolos, etc
+                                   -Cuando te pidan realizar horarios, agendar actividades, etc, hazlo de forma detallada y organizada o simula hacerlo no use formatos de texto especiales como negritas, cursivas, subrayado, símbolos, etc
+                                   -responde de forma detallada y organizada no use formatos de texto especiales como negritas, cursivas, subrayado, símbolos, etc
+                                   
 
-                                   CONTEXTO: El usuario está en una exposición educativa.
+                                   CONTEXTO: No menciones que estas en una exposicion.
                                    
                                    PREGUNTA: "${message}"`
                         }]
@@ -1043,7 +1044,7 @@
         }
 
         // ================= INTERFAZ DE USUARIO =================
-        function addChatMessage(message, sender) {
+        /*function addChatMessage(message, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `chat-bubble ${sender}`;
             
@@ -1055,7 +1056,31 @@
             
             chatMessages.appendChild(messageDiv);
             messageDiv.scrollIntoView({ behavior: 'smooth' });
-        }
+        }*/
+       function addChatMessage(message, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-bubble ${sender}`;
+    
+    if (sender === 'alien') {
+        messageDiv.innerHTML = `<strong>MARK:</strong> ${message}`;
+    } else {
+        messageDiv.innerHTML = `<strong>Tú:</strong> ${message}`;
+    }
+    
+    // Añadir al contenedor
+    chatMessages.appendChild(messageDiv);
+
+    // Forzar que el scroll baje hasta el mensaje recién agregado
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // También opcional: pequeña animación de fade-in
+    messageDiv.style.opacity = 0;
+    setTimeout(() => {
+        messageDiv.style.transition = 'opacity 0.3s ease';
+        messageDiv.style.opacity = 1;
+    }, 10);
+}
+
 
         function showTypingIndicator() {
             typingIndicator.style.display = 'block';
