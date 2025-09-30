@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COLEGIO MARK- Asistente de Voz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #00D4AA;
+            --secondary: #FF6B9D;
+            --accent: #FFD166;
+            --alien: #7DF9FF;
+            --dark: #0A0A1A;
+            --darker: #050510;
+            --light: #FFFFFF;
+            --nebula-1: #1A1A3E;
+            --nebula-2: #2D2D5A;
+            --nebula-3: #4A4A8C;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark), var(--nebula-1));
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fondo cósmico con estrellas */
+        .cosmic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.1;
+            animation: nebulaFloat 20s infinite ease-in-out;
+        }
+
+        .nebula-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--alien);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .nebula-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .nebula-3 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes nebulaFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, -20px) scale(1.1); }
+            50% { transform: translate(-15px, 15px) scale(0.9); }
+            75% { transform: translate(10px, 10px) scale(1.05); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            position: relative;
+        }
+
+        .school-name {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--alien), var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(125, 249, 255, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .status {
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin: 20px auto;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .status.connected {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.2);
+        }
+
+        .status.error {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .status.info {
+            background: rgba(255, 255, 0, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .alien-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .alien-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .alien-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .alien-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .alien {
+            width: 180px;
+            height: 220px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .alien-body {
+            width: 140px;
+            height: 160px;
+            background: linear-gradient(135deg, var(--alien), #A5FFD6);
+            border-radius: 50% 50% 40% 40%;
+            margin: 0 auto;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 
+                0 0 30px rgba(125, 249, 255, 0.4),
+                inset 0 -10px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(2deg); }
+            50% { transform: translateY(-8px) rotate(-1deg); }
+            75% { transform: translateY(-12px) rotate(1deg); }
+        }
+
+        .alien-face {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+        }
+
+        .alien-eyes {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .eye {
+            width: 30px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .pupil {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #0066CC;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            border: 2px solid #004499;
+        }
+
+        .alien-mouth {
+            width: 35px;
+            height: 18px;
+            background: var(--secondary);
+            border-radius: 0 0 18px 18px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 107, 157, 0.3);
+        }
+
+        .talking .alien-mouth {
+            animation: talk 0.5s infinite;
+        }
+
+        @keyframes talk {
+            0%, 100% { height: 18px; }
+            50% { height: 10px; }
+        }
+
+        .greeting-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--alien));
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .greeting-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.4);
+        }
+
+        .greeting-btn:active {
+            transform: translateY(0);
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-card h3 {
+            margin-bottom: 15px;
+            color: var(--alien);
+            font-weight: 600;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li:before {
+            content: "•";
+            color: var(--alien);
+            font-weight: bold;
+        }
+
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+            max-height: 600px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        /* Scrollbar personalizado */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--alien);
+            border-radius: 3px;
+        }
+
+        /* === BLOQUE DE ESTILOS DE BURBUJAS, REEMPLAZADO Y ADAPTADO === */
+       /* === BLOQUE DE CHAT SIN BURBUJAS === */
+.chat-bubble {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    word-break: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    animation: fadeIn 0.35s ease;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* Alien a la izquierda */
+.chat-bubble.alien {
+    text-align: left;
+    color: var(--alien);
+    font-weight: 500;
+}
+
+/* Usuario a la derecha */
+.chat-bubble.user {
+    text-align: right;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+        /* === FIN BLOQUE DE BURBUJAS === */
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            background: var(--alien);
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            margin-bottom: 15px;
+            max-width: 90px;
+            box-shadow: 0 4px 15px rgba(125, 249, 255, 0.2);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--dark);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .text-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            outline: none;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .text-input:focus {
+            border-color: var(--alien);
+            box-shadow: 0 0 0 2px rgba(125, 249, 255, 0.2);
+        }
+
+        .text-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .send-btn {
+            padding: 15px 25px;
+            background: var(--accent);
+            border: none;
+            border-radius: 15px;
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .send-btn:hover {
+            background: #FFB847;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 209, 102, 0.3);
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .voice-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--alien), var(--primary));
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(125, 249, 255, 0.3);
+        }
+
+        .voice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(125, 249, 255, 0.4);
+        }
+
+        .voice-btn.listening {
+            background: linear-gradient(135deg, var(--secondary), #FF0080);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .suggestions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .suggestion-btn {
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .suggestion-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            border-color: var(--alien);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .school-name {
+                font-size: 2.5rem;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .suggestions {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-container {
+                min-height: 400px;
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo cósmico -->
+    <div class="cosmic-background">
+        <div class="stars" id="stars"></div>
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+        <div class="nebula nebula-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1 class="school-name">COLEGIO MARK</h1>
+            <p class="subtitle">Asistente Virtual</p>
+            <div id="apiStatus" class="status info">
+                Inicializando sistema ...
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="alien-section">
+                <div class="alien-card">
+                    <div class="alien-container">
+                        <div class="alien">
+                            <div class="alien-body">
+                                <div class="alien-face">
+                                    <div class="alien-eyes">
+                                        <div class="eye"><div class="pupil" id="leftPupil"></div></div>
+                                        <div class="eye"><div class="pupil" id="rightPupil"></div></div>
+                                    </div>
+                                    <div class="alien-mouth" id="alienMouth"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="greeting-btn" id="greetingButton">
+                        Saludar a la Audiencia
+                    </button>
+                </div>
+                
+                <div class="info-card">
+                    <h3>Características</h3>
+                    <ul class="feature-list">
+                        <li>Respuestas inteligentes en tiempo real</li>
+                        <li>Reconocimiento de voz avanzado</li>
+                        <li>Explicaciones claras y detalladas</li>
+                        <li>Tecnología  IA</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="chat-section">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-bubble alien">
+                            <strong>MARK:</strong> Hola, soy MARK, tu asistente virtual con inteligencia artificial. Puedo explicarte conceptos de programación, ciencia y tecnología. ¿En qué puedo ayudarte?
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" class="text-input" id="textInput" placeholder="Escribe tu pregunta sobre programación, IA, ciencia...">
+                        <button class="send-btn" onclick="sendTextMessage()">Enviar</button>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="voice-btn" id="voiceButton">
+                        <span>🎤</span> Habla con MARK
+                    </button>
+                    <p id="voiceStatus" style="text-align: center; margin-bottom: 15px; opacity: 0.8; font-size: 0.9rem;">
+                        Presiona el botón y habla con tu asistente IA
+                    </p>
+                    
+                    <div class="suggestions">
+                        <button class="suggestion-btn" onclick="sendSuggestion('Explícame qué es la inteligencia artificial')">¿Qué es la IA?</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('Cómo funciona el machine learning')">Machine Learning</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('Qué es la programación orientada a objetos')">Programación POO</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('Cuéntame sobre los agujeros negros')">Agujeros Negros</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= CONFIGURACIÓN GEMINI AI =================
+        const GEMINI_API_KEY = 'AIzaSyD5dPu_1UevA40kgqYTCS3rNGG7-MFECg8';
+        const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+        // ================= ELEMENTOS DOM =================
+        const apiStatus = document.getElementById('apiStatus');
+        const voiceButton = document.getElementById('voiceButton');
+        const greetingButton = document.getElementById('greetingButton');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const textInput = document.getElementById('textInput');
+        const chatMessages = document.getElementById('chatMessages');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const alienMouth = document.getElementById('alienMouth');
+        const alien = document.querySelector('.alien');
+        const leftPupil = document.getElementById('leftPupil');
+        const rightPupil = document.getElementById('rightPupil');
+        const starsContainer = document.getElementById('stars');
+
+        let recognition;
+        let speechSynth = window.speechSynthesis;
+        let isSpeaking = false;
+        let geminiConnected = false;
+
+        // ================= FONDO ESTELAR =================
+        function createStars() {
+            const starsCount = 150;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Retraso de animación aleatorio
+                star.style.animationDelay = `${Math.random() * 4}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // ================= INICIALIZACIÓN =================
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            // Verificar API Key
+            if (!GEMINI_API_KEY) {
+                showSetupInstructions();
+                setupFallbackMode();
+                return;
+            }
+
+            // Probar conexión con Gemini
+            const connected = await testGeminiConnection();
+            
+            if (connected) {
+                setupVoiceRecognition();
+                setTimeout(() => {
+                    speakResponse("Hola, soy MARK, tu asistente virtual con inteligencia artificial. Estoy aquí para ayudarte con tus preguntas sobre programación, ciencia y tecnología. ¿En qué puedo ayudarte hoy?");
+                }, 1000);
+            } else {
+                setupFallbackMode();
+            }
+        }
+
+        async function testGeminiConnection() {
+            apiStatus.textContent = "Conectando IA...";
+            
+            try {
+                const response = await fetch(GEMINI_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "Responde únicamente con 'CONECTADO' si estás funcionando correctamente."
+                            }]
+                        }],
+                        generationConfig: {
+                            maxOutputTokens: 10,
+                            temperature: 0.1
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const responseText = data.candidates[0].content.parts[0].text.trim();
+                    
+                    if (responseText.includes('CONECTADO')) {
+                        apiStatus.textContent = "Conectado a IA - ¡Listo!";
+                        apiStatus.className = "status connected";
+                        geminiConnected = true;
+                        
+                        // Mensaje de éxito
+                        addChatMessage("MARK: Conexión exitosa con IA. Ahora tengo acceso a inteligencia artificial avanzada. Puedes preguntarme cualquier cosa sobre programación, ciencia o tecnología.", 'alien');
+                        return true;
+                    }
+                }
+                throw new Error('Respuesta inesperada');
+                
+            } catch (error) {
+                apiStatus.textContent = "Error conectando con Gemini AI";
+                apiStatus.className = "status error";
+                console.error('Error de conexión Gemini:', error);
+                
+                // Mensaje de error específico
+                addChatMessage(`MARK: Error de conexión. No pude conectar con Gemini AI. Error: ${error.message}. Usaré mis respuestas locales inteligentes.`, 'alien');
+                return false;
+            }
+        }
+
+        function setupFallbackMode() {
+            apiStatus.textContent = "Modo local activado";
+            setupVoiceRecognition();
+        }
+
+        function setupVoiceRecognition() {
+            try {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.continuous = false;
+                recognition.lang = 'es-ES';
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    voiceStatus.textContent = "Escuchando... habla ahora";
+                    voiceButton.classList.add('listening');
+                    animateMouth(true);
+                };
+
+                recognition.onresult = function(event) {
+                    const message = event.results[0][0].transcript;
+                    voiceStatus.textContent = `Dijiste: "${message}"`;
+                    processUserMessage(message);
+                };
+
+                recognition.onerror = function(event) {
+                    voiceStatus.textContent = "Error de reconocimiento";
+                    voiceButton.classList.remove('listening');
+                    animateMouth(false);
+                };
+
+                recognition.onend = function() {
+                    voiceStatus.textContent = "Presiona para hablar";
+                    voiceButton.classList.remove('listening');
+                    animateMouth(false);
+                };
+
+            } catch (error) {
+                voiceStatus.textContent = "Reconocimiento de voz no disponible";
+                voiceButton.disabled = true;
+                console.error('Error reconocimiento voz:', error);
+            }
+        }
+
+        // ================= BOTÓN DE SALUDO =================
+        greetingButton.addEventListener('click', function() {
+            const greetingMessage = "Buenos días padres de familia, profesores y estudiantes de quinto primaria del colegio Mark. Que Dios los bendiga. Es un honor para mí, MARK, su asistente virtual, poder acompañarlos en esta exposición sobre el maravilloso mundo de la tecnología y la programación.";
+            
+            addChatMessage(greetingMessage, 'alien');
+            speakResponse(greetingMessage);
+        });
+
+        // ================= INTERACCIÓN =================
+        voiceButton.addEventListener('click', function() {
+            if (recognition && !isSpeaking) {
+                try {
+                    recognition.start();
+                } catch (error) {
+                    voiceStatus.textContent = "Error al iniciar reconocimiento";
+                }
+            }
+        });
+
+        textInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendTextMessage();
+            }
+        });
+
+        function sendTextMessage() {
+            const message = textInput.value.trim();
+            if (message) {
+                processUserMessage(message);
+                textInput.value = '';
+            }
+        }
+
+        function sendSuggestion(message) {
+            processUserMessage(message);
+        }
+
+        // ================= PROCESAMIENTO DE MENSAJES =================
+        async function processUserMessage(message) {
+            addChatMessage(message, 'user');
+            showTypingIndicator();
+            setAlienEmotion('thinking');
+            
+            try {
+                let response;
+                if (geminiConnected) {
+                    response = await getGeminiResponse(message);
+                } else {
+                    response = await getLocalAIResponse(message);
+                }
+                
+                hideTypingIndicator();
+                addChatMessage(response, 'alien');
+                speakResponse(response);
+                
+            } catch (error) {
+                hideTypingIndicator();
+                console.error('Error procesando mensaje:', error);
+                const fallback = await getLocalAIResponse(message);
+                addChatMessage(fallback, 'alien');
+                speakResponse(fallback);
+            }
+        }
+
+        // ================= GEMINI AI INTEGRATION =================
+        async function getGeminiResponse(message) {
+            const response = await fetch(GEMINI_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: `Eres MARK, un asistente amigable, inteligente y entusiasta. 
+                                   Especializado en explicar conceptos de programación, inteligencia artificial, ciencia y tecnología.
+
+                                   INSTRUCCIONES:
+                                   - Responde en ESPAÑOL conversacional
+                                   - Sé CLARO y EDUCATIVO
+                                   - Usa ejemplos y analogías simples
+                                   - Incluye datos interesantes relevantes
+                                   - Mantén respuestas de 3-5 frases
+                                   - Sé ENTRUSIASTA y MOTIVADOR
+                                   - NO uses emojis en tus respuestas
+                                   - Adapta el lenguaje al nivel del usuario
+                                   -no use formatos de texto especiales como negritas, cursivas, subrayado, símbolos, etc
+                                   - respuestas no muy largas
+
+                                   CONTEXTO: El usuario está en una exposición educativa.
+                                   
+                                   PREGUNTA: "${message}"`
+                        }]
+                    }],
+                    generationConfig: {
+                        maxOutputTokens: 300,
+                        temperature: 0.8,
+                        topP: 0.9,
+                        topK: 40
+                    },
+                    safetySettings: [
+                        {
+                            category: "HARM_CATEGORY_HARASSMENT",
+                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_HATE_SPEECH", 
+                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                        }
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Gemini API Error: ${errorData.error?.message || response.status}`);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        // ================= IA LOCAL MEJORADA =================
+        async function getLocalAIResponse(message) {
+            // Simular tiempo de procesamiento de IA
+            await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
+            
+            const lowerMessage = message.toLowerCase();
+            
+            const responses = {
+                programming: [
+                    "La programación es como aprender un nuevo idioma, pero para comunicarte con computadoras. Comienza con conceptos básicos como variables y funciones, y poco a poco puedes crear aplicaciones complejas. Es muy satisfactorio ver tus ideas cobrar vida en código.",
+                    "Programar es resolver problemas de manera creativa. Cada línea de código es una instrucción que le dice a la computadora exactamente qué hacer. Los lenguajes como Python, JavaScript y Java son herramientas diferentes para diferentes tipos de proyectos.",
+                    "La programación se basa en la lógica y la creatividad. Aprendes a descomponer problemas grandes en partes pequeñas y manejables. Es como construir con LEGO digital. Empezar puede ser desafiante, pero cada programa que creas te hace mejor."
+                ],
+                
+                ai: [
+                    "La inteligencia artificial es la simulación de procesos de inteligencia humana por máquinas. Incluye aprendizaje automático (machine learning), donde las computadoras aprenden de datos sin ser programadas explícitamente para cada tarea.",
+                    "La IA funciona encontrando patrones en grandes cantidades de datos. Al igual que los humanos aprenden de la experiencia, los algoritmos de IA mejoran con más datos. Hoy usamos IA en recomendaciones, asistentes virtuales y diagnósticos médicos.",
+                    "El machine learning es una parte de la IA donde las computadoras aprenden automáticamente. Usa algoritmos que encuentran patrones en datos y hacen predicciones. Es como enseñarle a un niño, pero con matemáticas y datos."
+                ],
+                
+                science: [
+                    "La ciencia es la forma sistemática que tenemos de entender el universo. Comienza con observaciones, luego hipótesis, experimentos y conclusiones. Cada descubrimiento nos acerca a comprender mejor nuestro mundo.",
+                    "El método científico es el corazón de la investigación. Observas un fenómeno, formulas una hipótesis, experimentas, analizas resultados y sacas conclusiones. Así es como hemos llegado a la medicina moderna, la tecnología y la exploración espacial.",
+                    "La curiosidad científica ha llevado a los mayores avances de la humanidad. Desde Newton y la gravedad hasta la teoría de la relatividad de Einstein, preguntarse por qué y cómo ha transformado nuestro mundo."
+                ],
+                
+                default: [
+                    "Excelente pregunta. Como asistente, encuentro fascinante la curiosidad humana. El conocimiento se construye paso a paso, preguntando y explorando.",
+                    "Interesante tema. La belleza del aprendizaje está en descubrir conexiones entre diferentes ideas. Cada pregunta te acerca a comprender mejor el mundo.",
+                    "Qué pregunta tan reflexiva. El proceso de aprendizaje es un viaje maravilloso. No se trata solo de respuestas, sino de las preguntas que nos hacemos en el camino.",
+                    "Me encanta esta pregunta. La búsqueda del conocimiento es lo que hace especiales a los humanos. Sigue explorando y preguntando."
+                ]
+            };
+
+            if (lowerMessage.includes('programación') || lowerMessage.includes('código') || lowerMessage.includes('python') || lowerMessage.includes('javascript')) {
+                return responses.programming[Math.floor(Math.random() * responses.programming.length)];
+            }
+            if (lowerMessage.includes('inteligencia artificial') || lowerMessage.includes('ia') || lowerMessage.includes('ai') || lowerMessage.includes('machine learning')) {
+                return responses.ai[Math.floor(Math.random() * responses.ai.length)];
+            }
+            if (lowerMessage.includes('ciencia') || lowerMessage.includes('científico') || lowerMessage.includes('investigación')) {
+                return responses.science[Math.floor(Math.random() * responses.science.length)];
+            }
+            
+            return responses.default[Math.floor(Math.random() * responses.default.length)];
+        }
+
+        // ================= INTERFAZ DE USUARIO =================
+        function addChatMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-bubble ${sender}`;
+            
+            if (sender === 'alien') {
+                messageDiv.innerHTML = `<strong>MARK:</strong> ${message}`;
+            } else {
+                messageDiv.innerHTML = `<strong>Tú:</strong> ${message}`;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'block';
+            typingIndicator.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function setAlienEmotion(emotion) {
+            alien.classList.remove('talking', 'thinking');
+            
+            switch(emotion) {
+                case 'talking':
+                    alien.classList.add('talking');
+                    break;
+                case 'thinking':
+                    // Ojos mirando hacia arriba (pensando)
+                    leftPupil.style.transform = 'translate(-50%, -70%)';
+                    rightPupil.style.transform = 'translate(-50%, -70%)';
+                    setTimeout(() => {
+                        leftPupil.style.transform = 'translate(-50%, -50%)';
+                        rightPupil.style.transform = 'translate(-50%, -50%)';
+                    }, 1000);
+                    break;
+                default:
+                    // Emoción normal
+                    break;
+            }
+        }
+
+        function animateMouth(talking) {
+            if (talking) {
+                alienMouth.style.animation = 'talk 0.5s infinite';
+            } else {
+                alienMouth.style.animation = 'none';
+            }
+        }
+
+        // ================= SÍNTESIS DE VOZ =================
+        function speakResponse(text) {
+            if (speechSynth.speaking) {
+                speechSynth.cancel();
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.1;
+            utterance.volume = 1.0;
+            
+            utterance.onstart = function() {
+                isSpeaking = true;
+                setAlienEmotion('talking');
+                animateMouth(true);
+            };
+            
+            utterance.onend = function() {
+                isSpeaking = false;
+                setAlienEmotion('normal');
+                animateMouth(false);
+            };
+            
+            utterance.onerror = function() {
+                isSpeaking = false;
+                setAlienEmotion('normal');
+                animateMouth(false);
+            };
+            
+            speechSynth.speak(utterance);
+        }
+
+        // ================= SEGUIMIENTO DE MIRADA =================
+        document.addEventListener('mousemove', (e) => {
+            if (isSpeaking) return;
+            
+            const alienRect = alien.getBoundingClientRect();
+            const alienCenterX = alienRect.left + alienRect.width / 2;
+            const alienCenterY = alienRect.top + alienRect.height / 2;
+            
+            const angleX = (e.clientX - alienCenterX) / 100;
+            const angleY = (e.clientY - alienCenterY) / 100;
+            
+            leftPupil.style.transform = `translate(calc(-50% + ${angleX}px), calc(-50% + ${angleY}px))`;
+            rightPupil.style.transform = `translate(calc(-50% + ${angleX}px), calc(-50% + ${angleY}px))`;
+        });
+    </script>
+</body>
+</html>
